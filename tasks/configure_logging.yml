@@ -2,7 +2,7 @@
 # ldapcompare cannot be used on cn=config https://pagure.io/389-ds-base/issue/49390
 # this excludes state=present and state=absent, but state=exact still works (only does a ldapsearch)
 - name: Configure Audit logging
-  ldap_attr:
+  ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -21,7 +21,7 @@
     - { name: 'nsslapd-auditlog-mode', value: "{{ dirsrv_logging.audit.mode }}" }
 
 - name: Configure Error logging
-  ldap_attr:
+  ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -40,7 +40,7 @@
     - { name: "nsslapd-errorlog-mode", value: "{{ dirsrv_logging.error.mode }}" }
 
 - name: Configure Access logging
-  ldap_attr:
+  ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"

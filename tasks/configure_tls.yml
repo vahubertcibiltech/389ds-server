@@ -252,7 +252,7 @@
   register: dirsrv_restart_condition_tls_3
 
 - name: Configure RSA parameters
-  ldap_attr:
+  ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -277,7 +277,7 @@
 # possibly immediately.
 # Also: for this reason, the order is relevant.
 - name: Configure TLS support
-  ldap_attr:
+  ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -291,7 +291,7 @@
 
 # Doesn't work:
 # - name: Disable TLS-only port (636)
-#   ldap_attr:
+#   ldap_attrs:
 #     params: "{{ ldap_auth }}"
 #     dn: "cn=config"
 #     name: "nsslapd-securePort"
@@ -299,7 +299,7 @@
 #     state: exact
 
 - name: Configure TLS minimum version (disable SSL)
-  ldap_attr:
+  ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -319,7 +319,7 @@
 
 # TODO: support it?
 - name: Disable TLS client authentication
-  ldap_attr:
+  ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -333,7 +333,7 @@
   tags: [ dirsrv_tls ]
 
 - name: Configure anonymous binds
-  ldap_attr:
+  ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -353,7 +353,7 @@
   tags: [ dirsrv_tls ]
 
 - name: Configure secure listen address
-  ldap_attr:
+  ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"

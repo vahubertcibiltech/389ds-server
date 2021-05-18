@@ -50,7 +50,7 @@
       or (dirsrv_tls_enforced_initially_ssf_set.rc == 0 and dirsrv_tls_enforced_initially_ssf.rc == 1) }}"
 
 - name: Configure listen address
-  ldap_attr:
+  ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
