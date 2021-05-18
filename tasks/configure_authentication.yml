@@ -25,8 +25,8 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        name: "{{ item.name }}"
-        values: "{{ item.value }}"
+        attributes: 
+          "{{ item.name }}": "{{ item.value }}"
         state: exact
       loop: "{{ dirsrv_ldapi_config }}"
       register: dirsrv_restart_condition_auth_1
@@ -38,7 +38,8 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        name: "{{ item.name }}"
+        attributes: 
+          "{{ item.name }}": "{{ item.value }}"
         values: "{{ item.value }}"
         state: exact
       loop: "{{ dirsrv_ldapi_config }}"
@@ -55,8 +56,8 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        name: "nsslapd-allowed-sasl-mechanisms"
-        values: "{{ 'PLAIN' if dirsrv_sasl_plain_enabled else [] }}"
+        attributes: 
+        nsslapd-allowed-sasl-mechanisms: "{{ 'PLAIN' if dirsrv_sasl_plain_enabled else [] }}"
         state: exact
       register: dirsrv_sasl_result
 
@@ -89,8 +90,8 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        name: "passwordStorageScheme"
-        values: "{{ dirsrv_normalized_password_storage_scheme }}"
+        attributes: 
+          passwordStorageScheme: "{{ dirsrv_normalized_password_storage_scheme }}"
         state: exact
       register: dirsrv_pwdstorage_result
       when: dirsrv_normalized_password_storage_scheme != "DEFAULT"
@@ -106,8 +107,8 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        name: "passwordStorageScheme"
-        values: "{{ dirsrv_normalized_password_storage_scheme }}"
+        attributes: 
+          passwordStorageScheme: "{{ dirsrv_normalized_password_storage_scheme }}"
         state: exact
       register: dirsrv_pwdstorage_result
       when: dirsrv_normalized_password_storage_scheme == "DEFAULT"

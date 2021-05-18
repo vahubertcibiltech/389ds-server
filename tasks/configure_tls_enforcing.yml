@@ -8,8 +8,8 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        name: "{{ item.name }}"
-        values: "{{ item.value }}"
+        attributes: 
+          "{{ item.name }}":  "{{ item.value }}"
         state: exact
       loop:
         - { name: "nsslapd-require-secure-binds", value: "{{ 'on' if dirsrv_tls_enabled and dirsrv_tls_enforced else 'off' }}" }
@@ -27,8 +27,8 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        name: "{{ item.name }}"
-        values: "{{ item.value }}"
+        attributes: 
+          "{{ item.name }}":  "{{ item.value }}"
         state: exact
       loop:
         - { name: "nsslapd-require-secure-binds", value: "{{ 'on' if dirsrv_tls_enabled and dirsrv_tls_enforced else 'off' }}" }
