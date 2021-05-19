@@ -1,6 +1,18 @@
 ---
 # ldapcompare cannot be used on cn=config https://pagure.io/389-ds-base/issue/49390
 # this excludes state=present and state=absent, but state=exact still works (only does a ldapsearch)
+
+- name: Set fact
+  set_fact:
+    attributes:_audit_logging "{{ _audit_logging | default({}) | combine( {item.name: item.value} ) }}"
+  loop:
+    - { name: 'nsslapd-auditlog-logging-enabled', value: "{{ 'on' if dirsrv_logging.audit.enabled else 'off' }}" }
+    - { name: 'nsslapd-auditlog-logrotationtimeunit', value: "{{ dirsrv_logging.audit.logrotationtimeunit }}" }
+    - { name: 'nsslapd-auditlog-logmaxdiskspace', value: "{{ dirsrv_logging.audit.logmaxdiskspace }}"}
+    - { name: 'nsslapd-auditlog-maxlogsize', value: "{{ dirsrv_logging.audit.maxlogsize }}" }
+    - { name: 'nsslapd-auditlog-maxlogsperdir', value: "{{ dirsrv_logging.audit.maxlogsperdir }}" }
+    - { name: 'nsslapd-auditlog-mode', value: "{{ dirsrv_logging.audit.mode }}" }
+
 - name: Configure Audit logging
   ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
@@ -9,15 +21,19 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: cn=config
-    attributes: "{{ item }}"
+    attributes: "{{ _audit_logging }}"
     state: exact
+
+- name: Set fact
+  set_fact:
+    attributes_error_logging: "{{ attributes_error_logging | default({}) | combine( {item.name: item.value} ) }}"
   loop:
-    - { name: 'nsslapd-auditlog-logging-enabled', value: "{{ 'on' if dirsrv_logging.audit.enabled else 'off' }}" }
-    - { name: 'nsslapd-auditlog-logrotationtimeunit', value: "{{ dirsrv_logging.audit.logrotationtimeunit }}" }
-    - { name: 'nsslapd-auditlog-logmaxdiskspace', value: "{{ dirsrv_logging.audit.logmaxdiskspace }}"}
-    - { name: 'nsslapd-auditlog-maxlogsize', value: "{{ dirsrv_logging.audit.maxlogsize }}" }
-    - { name: 'nsslapd-auditlog-maxlogsperdir', value: "{{ dirsrv_logging.audit.maxlogsperdir }}" }
-    - { name: 'nsslapd-auditlog-mode', value: "{{ dirsrv_logging.audit.mode }}" }
+    - { name: "nsslapd-errorlog-logging-enabled", value: "{{ 'on' if dirsrv_logging.error.enabled else 'off' }}" }
+    - { name: "nsslapd-errorlog-logrotationtimeunit", value: "{{ dirsrv_logging.error.logrotationtimeunit }}" }
+    - { name: "nsslapd-errorlog-logmaxdiskspace", value: "{{ dirsrv_logging.error.logmaxdiskspace }}" }
+    - { name: "nsslapd-errorlog-maxlogsize", value: "{{ dirsrv_logging.error.maxlogsize }}" }
+    - { name: "nsslapd-errorlog-maxlogsperdir", value: "{{ dirsrv_logging.error.maxlogsperdir }}" }
+    - { name: "nsslapd-errorlog-mode", value: "{{ dirsrv_logging.error.mode }}" }
 
 - name: Configure Error logging
   ldap_attrs:
@@ -27,15 +43,19 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: cn=config
-    attributes: "{{ item }}"
+    attributes: "{{ attributes_error_logging }}"
     state: exact
+
+- name: Set fact
+  set_fact:
+    attributes_access_logging: "{{ attributes_access_logging | default({}) | combine( {item.name: item.value} ) }}"
   loop:
-    - { name: "nsslapd-errorlog-logging-enabled", value: "{{ 'on' if dirsrv_logging.error.enabled else 'off' }}" }
-    - { name: "nsslapd-errorlog-logrotationtimeunit", value: "{{ dirsrv_logging.error.logrotationtimeunit }}" }
-    - { name: "nsslapd-errorlog-logmaxdiskspace", value: "{{ dirsrv_logging.error.logmaxdiskspace }}" }
-    - { name: "nsslapd-errorlog-maxlogsize", value: "{{ dirsrv_logging.error.maxlogsize }}" }
-    - { name: "nsslapd-errorlog-maxlogsperdir", value: "{{ dirsrv_logging.error.maxlogsperdir }}" }
-    - { name: "nsslapd-errorlog-mode", value: "{{ dirsrv_logging.error.mode }}" }
+    - { name: "nsslapd-accesslog-logging-enabled", value: "{{ 'on' if dirsrv_logging.access.enabled else 'off' }}" }
+    - { name: "nsslapd-accesslog-logrotationtimeunit", value: "{{ dirsrv_logging.access.logrotationtimeunit }}" }
+    - { name: "nsslapd-accesslog-logmaxdiskspace", value: "{{ dirsrv_logging.access.logmaxdiskspace }}" }
+    - { name: "nsslapd-accesslog-maxlogsize", value: "{{ dirsrv_logging.access.maxlogsize }}" }
+    - { name: "nsslapd-accesslog-maxlogsperdir", value: "{{ dirsrv_logging.access.maxlogsperdir }}" }
+    - { name: "nsslapd-accesslog-mode", value: "{{ dirsrv_logging.access.mode }}" }
 
 - name: Configure Access logging
   ldap_attrs:
@@ -45,12 +65,6 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: cn=config
-    attributes: "{{ item }}"
+    attributes: "{{ attributes_access_logging }}"
     state: exact
-  loop:
-    - { name: "nsslapd-accesslog-logging-enabled", value: "{{ 'on' if dirsrv_logging.access.enabled else 'off' }}" }
-    - { name: "nsslapd-accesslog-logrotationtimeunit", value: "{{ dirsrv_logging.access.logrotationtimeunit }}" }
-    - { name: "nsslapd-accesslog-logmaxdiskspace", value: "{{ dirsrv_logging.access.logmaxdiskspace }}" }
-    - { name: "nsslapd-accesslog-maxlogsize", value: "{{ dirsrv_logging.access.maxlogsize }}" }
-    - { name: "nsslapd-accesslog-maxlogsperdir", value: "{{ dirsrv_logging.access.maxlogsperdir }}" }
-    - { name: "nsslapd-accesslog-mode", value: "{{ dirsrv_logging.access.mode }}" }
+

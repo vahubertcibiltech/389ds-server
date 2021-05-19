@@ -17,6 +17,11 @@
           - { name: "nsslapd-ldapiautobind", value: "off" }
       when: not dirsrv_ldapi_enabled
 
+    - name: Set fact
+      set_fact:
+        attributes_ldapi: "{{ attributes_ldapi | default({}) | combine( {item.name: item.value} ) }}"
+      loop: "{{ dirsrv_ldapi_config }}"
+
     - name: Configure LDAPI
       ldap_attrs:
         server_uri: "{{ dirsrv_server_uri }}"
@@ -25,9 +30,8 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        attributes: "{{ item }}"
+        attributes: "{{ attributes_ldapi }}"
         state: exact
-      loop: "{{ dirsrv_ldapi_config }}"
       register: dirsrv_restart_condition_auth_1
 
   rescue:

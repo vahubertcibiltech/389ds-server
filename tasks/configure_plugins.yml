@@ -103,16 +103,9 @@
         - "cn=GID numbers,cn=Distributed Numeric Assignment Plugin,cn=plugins,cn=config"
       register: dirsrv_restart_condition_plugins_2
 
-    - name: Configure DNA plugin parameters (UID)
-      ldap_attrs:
-        server_uri: "{{ dirsrv_server_uri }}"
-        validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
-        start_tls: "{{ dirsrv_starttls_early }}"
-        bind_dn: "{{ dirsrv_rootdn }}"
-        bind_pw: "{{ dirsrv_rootdn_password }}"
-        dn: "cn=UID numbers,cn=Distributed Numeric Assignment Plugin,cn=plugins,cn=config"
-        attributes: "{{ item }}"
-        state: exact
+    - name: Set fact
+      set_fact:
+        attributes_dna_uid: "{{ attributes_dna_uid | default({}) | combine( {item.name: item.value} ) }}"
       loop:
         - { name: "cn", value: "UID numbers" }
         - { name: "dnatype", value: "uidNumber" }
@@ -122,18 +115,22 @@
         - { name: "dnanextvalue", value: "{{ dirsrv_dna_plugin.uid_min }}" }
         - { name: "dnamaxvalue", value: "{{ dirsrv_dna_plugin.uid_max }}" }
         - { name: "dnasharedcfgdn", value: "cn=Account UIDs,ou=Ranges,{{ dirsrv_suffix }}" }
-      register: dirsrv_restart_condition_plugins_3
 
-    - name: Configure DNA plugin parameters (GID)
+    - name: Configure DNA plugin parameters (UID)
       ldap_attrs:
         server_uri: "{{ dirsrv_server_uri }}"
         validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
         start_tls: "{{ dirsrv_starttls_early }}"
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
-        dn: "cn=GID numbers,cn=Distributed Numeric Assignment Plugin,cn=plugins,cn=config"
-        attributes: "{{ item }}"
+        dn: "cn=UID numbers,cn=Distributed Numeric Assignment Plugin,cn=plugins,cn=config"
+        attributes: "{{ attributes_dna_uid }}"
         state: exact
+      register: dirsrv_restart_condition_plugins_3
+
+    - name: Set fact
+      set_fact:
+        attributes_dna_gid: "{{ attributes_dna_gid | default({}) | combine( {item.name: item.value} ) }}"
       loop:
         - { name: "cn", value: "GID numbers" }
         - { name: "dnatype", value: "gidNumber" }
@@ -143,6 +140,17 @@
         - { name: "dnanextvalue", value: "{{ dirsrv_dna_plugin.gid_min }}" }
         - { name: "dnamaxvalue", value: "{{ dirsrv_dna_plugin.gid_max }}" }
         - { name: "dnasharedcfgdn", value: "cn=Account GIDs,ou=Ranges,{{ dirsrv_suffix }}" }
+        
+    - name: Configure DNA plugin parameters (GID)
+      ldap_attrs:
+        server_uri: "{{ dirsrv_server_uri }}"
+        validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
+        start_tls: "{{ dirsrv_starttls_early }}"
+        bind_dn: "{{ dirsrv_rootdn }}"
+        bind_pw: "{{ dirsrv_rootdn_password }}"
+        dn: "cn=GID numbers,cn=Distributed Numeric Assignment Plugin,cn=plugins,cn=config"
+        attributes: "{{ attributes_dna_gid }}"
+        state: exact
       register: dirsrv_restart_condition_plugins_4
 
   when: "'Distributed Numeric Assignment Plugin' in dirsrv_plugins_enabled and dirsrv_plugins_enabled['Distributed Numeric Assignment Plugin']"

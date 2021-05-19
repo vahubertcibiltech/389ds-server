@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  become: false
+  gather_facts: false
+
+  vars:
+    test:
+      - name: "test-off"
+        value: "off"
+      - name: "test-on"
+        value: "on"
+  tasks:
+  - debug: 
+      msg: "{{ test }}"
+
+  - debug:
+      msg: "{{ item }}"
+    loop: "{{ test }}"
+    
+  - set_fact:
+      newfact: "{{ newfact | default({}) | combine( {item.name: item.value} ) }}"
+    loop: "{{ test }}"
+
+  - debug:
+      msg: "{{ newfact }}"
