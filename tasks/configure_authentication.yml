@@ -25,7 +25,7 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        attributes: 
+        attributes:
           "{{ item.name }}": "{{ item.value }}"
         state: exact
       loop: "{{ dirsrv_ldapi_config }}"
@@ -38,7 +38,7 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        attributes: 
+        attributes:
           "{{ item.name }}": "{{ item.value }}"
         values: "{{ item.value }}"
         state: exact
@@ -56,8 +56,8 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        attributes: 
-        nsslapd-allowed-sasl-mechanisms: "{{ 'PLAIN' if dirsrv_sasl_plain_enabled else [] }}"
+        attributes:
+          nsslapd-allowed-sasl-mechanisms: "{{ 'PLAIN' if dirsrv_sasl_plain_enabled else [] }}"
         state: exact
       register: dirsrv_sasl_result
 
@@ -90,7 +90,7 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        attributes: 
+        attributes:
           passwordStorageScheme: "{{ dirsrv_normalized_password_storage_scheme }}"
         state: exact
       register: dirsrv_pwdstorage_result
@@ -107,7 +107,7 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        attributes: 
+        attributes:
           passwordStorageScheme: "{{ dirsrv_normalized_password_storage_scheme }}"
         state: exact
       register: dirsrv_pwdstorage_result

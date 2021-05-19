@@ -7,7 +7,7 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: "cn={{ item.key }},cn=plugins,cn=config"
-    attributes: 
+    attributes:
       nsslapd-pluginEnabled: "{{ 'on' if item.value else 'off' }}"
     state: exact
   loop: "{{ dirsrv_plugins_enabled | dict2items }}"
@@ -111,8 +111,8 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=UID numbers,cn=Distributed Numeric Assignment Plugin,cn=plugins,cn=config"
-        attributes: 
-          "{{ item.name }}":  "{{ item.value }}"
+        attributes:
+          "{{ item.name }}": "{{ item.value }}"
         state: exact
       loop:
         - { name: "cn", value: "UID numbers" }
@@ -133,8 +133,8 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=GID numbers,cn=Distributed Numeric Assignment Plugin,cn=plugins,cn=config"
-        attributes: 
-          "{{ item.name }}":  "{{ item.value }}"
+        attributes:
+          "{{ item.name }}": "{{ item.value }}"
         state: exact
       loop:
         - { name: "cn", value: "GID numbers" }

@@ -57,7 +57,7 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: "cn=config"
-    attribute: 
+    attributes:
       nsslapd-listenhost: "{{ dirsrv_listen_host }}"
     state: exact
   register: dirsrv_restart_condition_main

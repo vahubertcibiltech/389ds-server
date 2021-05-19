@@ -9,8 +9,8 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: cn=config
-    attributes: 
-      "{{ item.name }}":  "{{ item.value }}"
+    attributes:
+      "{{ item.name }}": "{{ item.value }}"
     state: exact
   loop:
     - { name: 'nsslapd-auditlog-logging-enabled', value: "{{ 'on' if dirsrv_logging.audit.enabled else 'off' }}" }
@@ -28,8 +28,8 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: cn=config
-    attributes: 
-      "{{ item.name }}":  "{{ item.value }}"
+    attributes:
+      "{{ item.name }}": "{{ item.value }}"
     state: exact
   loop:
     - { name: "nsslapd-errorlog-logging-enabled", value: "{{ 'on' if dirsrv_logging.error.enabled else 'off' }}" }
@@ -47,8 +47,8 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: cn=config
-    attributes: 
-      "{{ item.name }}":  "{{ item.value }}"
+    attributes:
+      "{{ item.name }}": "{{ item.value }}"
     state: exact
   loop:
     - { name: "nsslapd-accesslog-logging-enabled", value: "{{ 'on' if dirsrv_logging.access.enabled else 'off' }}" }
