@@ -251,6 +251,15 @@
   tags: [ dirsrv_tls ]
   register: dirsrv_restart_condition_tls_3
 
+- name: Set fact
+  set_fact:
+    attributes_rsa: "{{ attributes_rsa | default({}) | combine( {item.name: item.value} ) }}"
+  loop:
+    - { name: "cn", value: "RSA" }
+    - { name: "nsSSLToken", value: "internal (software)" }
+    - { name: "nsSSLPersonalitySSL", value: "server-cert-ansible-managed" }
+    - { name: "nsSSLActivation", value: "on" }
+
 - name: Configure RSA parameters
   ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
@@ -259,13 +268,8 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: "cn=RSA,cn=encryption,cn=config"
-    attributes: "{{ item }}"
+    attributes: "{{ attributes_rsa }}"
     state: exact
-  loop:
-    - { name: "cn", value: "RSA" }
-    - { name: "nsSSLToken", value: "internal (software)" }
-    - { name: "nsSSLPersonalitySSL", value: "server-cert-ansible-managed" }
-    - { name: "nsSSLActivation", value: "on" }
   when: dirsrv_tls_enabled | bool
   tags: [ dirsrv_tls ]
   register: dirsrv_restart_condition_tls_4
@@ -297,6 +301,14 @@
 #     values: "0"
 #     state: exact
 
+- name: Set fact
+  set_fact:
+    attributes_tls: "{{ attributes_tls | default({}) | combine( {item.name: item.value} ) }}"
+  loop:
+    - { name: "nsssl2", value: "off" }
+    - { name: "nsssl3", value: "off" }
+    - { name: "sslVersionMin", value: "TLS{{ dirsrv_tls_min_version }}" }
+
 - name: Configure TLS minimum version (disable SSL)
   ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
@@ -305,12 +317,8 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: cn=encryption,cn=config
-    attributes: "{{ item }}"
+    attributes: "{{ attributes_tls }}"
     state: exact
-  loop:
-    - { name: "nsssl2", value: "off" }
-    - { name: "nsssl3", value: "off" }
-    - { name: "sslVersionMin", value: "TLS{{ dirsrv_tls_min_version }}" }
   register: dirsrv_restart_condition_tls_5
   when: dirsrv_tls_enabled | bool
   tags: [ dirsrv_tls ]
@@ -330,6 +338,13 @@
   when: dirsrv_tls_enabled | bool
   tags: [ dirsrv_tls ]
 
+- name: Set fact
+  set_fact:
+    attributes_anonymous_access: "{{ attributeattributes_anonymous_accesss_tls | default({}) | combine( {item.name: item.value} ) }}"
+  loop:
+    - name: "nsslapd-allow-anonymous-access"
+      value: "{{ 'rootdse' if dirsrv_allow_anonymous_binds == 'rootdse' else 'on' if dirsrv_allow_anonymous_binds else 'off' }}"
+
 - name: Configure anonymous binds
   ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
@@ -338,12 +353,8 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: "cn=config"
-    attributes: "{{ item }}"
+    attributes: "{{ attributes_anonymous_access }}"
     state: exact
-  loop:
-    -
-      name: "nsslapd-allow-anonymous-access"
-      value: "{{ 'rootdse' if dirsrv_allow_anonymous_binds == 'rootdse' else 'on' if dirsrv_allow_anonymous_binds else 'off' }}"
   # This defaults to "off" and it's better left alone
   # - { name: "nsslapd-allow-unauthenticated-binds", value: "{{ 'on' if allow_unauthenticated_binds else 'off' }" }
   when: dirsrv_tls_enabled | bool
