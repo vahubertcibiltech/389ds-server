@@ -140,7 +140,7 @@
         - { name: "dnanextvalue", value: "{{ dirsrv_dna_plugin.gid_min }}" }
         - { name: "dnamaxvalue", value: "{{ dirsrv_dna_plugin.gid_max }}" }
         - { name: "dnasharedcfgdn", value: "cn=Account GIDs,ou=Ranges,{{ dirsrv_suffix }}" }
-        
+
     - name: Configure DNA plugin parameters (GID)
       ldap_attrs:
         server_uri: "{{ dirsrv_server_uri }}"

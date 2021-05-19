@@ -67,4 +67,3 @@
     dn: cn=config
     attributes: "{{ attributes_access_logging }}"
     state: exact
-
