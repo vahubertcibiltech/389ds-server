@@ -21,7 +21,7 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: cn=config
-    attributes: "{{ _audit_logging }}"
+    attributes: "{{ attributes_audit_logging }}"
     state: exact
 
 - name: Set fact
