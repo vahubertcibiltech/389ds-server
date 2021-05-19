@@ -4,7 +4,7 @@
 
 - name: Set fact
   set_fact:
-    attributes:_audit_logging "{{ _audit_logging | default({}) | combine( {item.name: item.value} ) }}"
+    attributes_audit_logging: "{{ attributes_audit_logging | default({}) | combine( {item.name: item.value} ) }}"
   loop:
     - { name: 'nsslapd-auditlog-logging-enabled', value: "{{ 'on' if dirsrv_logging.audit.enabled else 'off' }}" }
     - { name: 'nsslapd-auditlog-logrotationtimeunit', value: "{{ dirsrv_logging.audit.logrotationtimeunit }}" }
