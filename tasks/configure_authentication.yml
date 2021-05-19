@@ -25,8 +25,7 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        attributes:
-          "{{ item.name }}": "{{ item.value }}"
+        attributes: '{ {{ item.name }}": "{{ item.value }}" }' 
         state: exact
       loop: "{{ dirsrv_ldapi_config }}"
       register: dirsrv_restart_condition_auth_1
@@ -38,8 +37,7 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        attributes:
-          "{{ item.name }}": "{{ item.value }}"
+        attributes: '{ {{ item.name }}": "{{ item.value }}" }' 
         values: "{{ item.value }}"
         state: exact
       loop: "{{ dirsrv_ldapi_config }}"
