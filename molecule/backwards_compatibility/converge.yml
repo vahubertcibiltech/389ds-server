@@ -109,7 +109,7 @@
         bind_dn: "{{ dirsrv_rootdn }}"
         bind_pw: "{{ dirsrv_rootdn_password }}"
         dn: "cn=config"
-        attributes: 
+        attributes:
           nsslapd-security: off
         state: exact
       register: dirsrv_backwards_tls_test

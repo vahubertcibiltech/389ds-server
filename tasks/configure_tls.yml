@@ -307,7 +307,7 @@
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: cn=encryption,cn=config
     attributes:
-        "{{ item.name }}": "{{ item.value }}"
+      "{{ item.name }}": "{{ item.value }}"
     state: exact
   loop:
     - { name: "nsssl2", value: "off" }
