@@ -259,8 +259,7 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: "cn=RSA,cn=encryption,cn=config"
-    attributes:
-      "{{ item.name }}": "{{ item.value }}"
+    attributes: "{{ item }}"
     state: exact
   loop:
     - { name: "cn", value: "RSA" }
@@ -306,8 +305,7 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: cn=encryption,cn=config
-    attributes:
-      "{{ item.name }}": "{{ item.value }}"
+    attributes: "{{ item }}"
     state: exact
   loop:
     - { name: "nsssl2", value: "off" }
@@ -340,8 +338,7 @@
     bind_dn: "{{ dirsrv_rootdn }}"
     bind_pw: "{{ dirsrv_rootdn_password }}"
     dn: "cn=config"
-    attributes:
-      "{{ item.name }}": "{{ item.value }}"
+    attributes: "{{ item }}"
     state: exact
   loop:
     -

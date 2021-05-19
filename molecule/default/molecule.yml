@@ -6,7 +6,7 @@ driver:
 lint: |
   set -e
   find . -name "*.yml" -exec yamllint {} \;
-  ansible-lint
+  ansible-lint -c .ansible-lint
 platforms:
   - name: CentOS7-Default
     image: centos:7
