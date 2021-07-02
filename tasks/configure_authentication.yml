@@ -33,7 +33,7 @@
         attributes: "{{ attributes_ldapi }}"
         state: exact
       register: dirsrv_restart_condition_auth_1
-      when : not ansible_check_mode
+      when: not ansible_check_mode
 
   rescue:
     - name: Configure LDAPI over LDAPI
