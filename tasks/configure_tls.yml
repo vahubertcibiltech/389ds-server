@@ -143,6 +143,7 @@
     - name: Count keys
       set_fact:
         dirsrv_nss_key_count_too_many: "{{ dirsrv_nss_key_count.stdout | int > 1 }}"
+      when: not ansible_check_mode
 
     # This is the correct way to remove private keys (section 9.3.8.1
     # from the Administration Guide), however it removes a "random"
@@ -154,7 +155,7 @@
         -d /etc/dirsrv/slapd-{{ dirsrv_serverid }}
         -n "server-cert-ansible-managed"
         {{ dirsrv_certutil_authflag }}
-      when: dirsrv_nss_key_count_too_many
+      when: not ansible_check_mode and dirsrv_nss_key_count_too_many
       # I'm still wondering if this loop is horrible or clever...
       loop: "{{ range(0, dirsrv_nss_key_count.stdout|int) | list }}"
 
@@ -166,7 +167,7 @@
         -d /etc/dirsrv/slapd-{{ dirsrv_serverid }}
         {{ dirsrv_pkutil_authflag }}
         -W ''
-      when: dirsrv_nss_key_count_too_many
+      when: not ansible_check_mode and dirsrv_nss_key_count_too_many
       register: dirsrv_restart_condition_tls_1
 
       # I *think* this may be needed for self-signed certificates, but not entirely sure...
@@ -247,7 +248,7 @@
       - top
       - nsEncryptionModule
     state: present
-  when: dirsrv_tls_enabled | bool
+  when: not ansible_check_mode and dirsrv_tls_enabled | bool
   tags: [ dirsrv_tls ]
   register: dirsrv_restart_condition_tls_3
 
@@ -261,7 +262,7 @@
     - { name: "nsSSLActivation", value: "on" }
 
 - name: Configure RSA parameters
-  ldap_attrs:
+  community.general.ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -270,7 +271,7 @@
     dn: "cn=RSA,cn=encryption,cn=config"
     attributes: "{{ attributes_rsa }}"
     state: exact
-  when: dirsrv_tls_enabled | bool
+  when: not ansible_check_mode and dirsrv_tls_enabled | bool
   tags: [ dirsrv_tls ]
   register: dirsrv_restart_condition_tls_4
 
@@ -280,7 +281,7 @@
 # possibly immediately.
 # Also: for this reason, the order is relevant.
 - name: Configure TLS support
-  ldap_attrs:
+  community.general.ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -290,11 +291,12 @@
     attributes:
       nsslapd-security: "{{ 'on' if dirsrv_tls_enabled else 'off' }}"
     state: exact
+  when: not ansible_check_mode
   tags: [ dirsrv_tls ]
 
 # Doesn't work:
 # - name: Disable TLS-only port (636)
-#   ldap_attrs:
+#   community.general.ldap_attrs:
 #     params: "{{ ldap_auth }}"
 #     dn: "cn=config"
 #     name: "nsslapd-securePort"
@@ -310,7 +312,7 @@
     - { name: "sslVersionMin", value: "TLS{{ dirsrv_tls_min_version }}" }
 
 - name: Configure TLS minimum version (disable SSL)
-  ldap_attrs:
+  community.general.ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -320,12 +322,12 @@
     attributes: "{{ attributes_tls }}"
     state: exact
   register: dirsrv_restart_condition_tls_5
-  when: dirsrv_tls_enabled | bool
+  when: not ansible_check_mode and dirsrv_tls_enabled | bool
   tags: [ dirsrv_tls ]
 
 # TODO: support it?
 - name: Disable TLS client authentication
-  ldap_attrs:
+  community.general.ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -335,7 +337,7 @@
     attributes:
       nsSSLClientAuth: "off"
     state: exact
-  when: dirsrv_tls_enabled | bool
+  when: not ansible_check_mode and dirsrv_tls_enabled | bool
   tags: [ dirsrv_tls ]
 
 - name: Set fact
@@ -346,7 +348,7 @@
       value: "{{ 'rootdse' if dirsrv_allow_anonymous_binds == 'rootdse' else 'on' if dirsrv_allow_anonymous_binds else 'off' }}"
 
 - name: Configure anonymous binds
-  ldap_attrs:
+  community.general.ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -357,11 +359,11 @@
     state: exact
   # This defaults to "off" and it's better left alone
   # - { name: "nsslapd-allow-unauthenticated-binds", value: "{{ 'on' if allow_unauthenticated_binds else 'off' }" }
-  when: dirsrv_tls_enabled | bool
+  when: not ansible_check_mode and dirsrv_tls_enabled | bool
   tags: [ dirsrv_tls ]
 
 - name: Configure secure listen address
-  ldap_attrs:
+  community.general.ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -372,5 +374,5 @@
       nsslapd-securelistenhost: "{{ dirsrv_secure_listen_host }}"
     state: exact
   register: dirsrv_restart_condition_tls_6
-  when: dirsrv_secure_listen_host != None
+  when: not ansible_check_mode and dirsrv_secure_listen_host != None
   tags: [ dirsrv_tls ]

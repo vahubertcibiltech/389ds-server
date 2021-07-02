@@ -14,7 +14,7 @@
     - { name: 'nsslapd-auditlog-mode', value: "{{ dirsrv_logging.audit.mode }}" }
 
 - name: Configure Audit logging
-  ldap_attrs:
+  community.general.ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -23,6 +23,7 @@
     dn: cn=config
     attributes: "{{ attributes_audit_logging }}"
     state: exact
+  when: not ansible_check_mode
 
 - name: Set fact
   set_fact:
@@ -36,7 +37,7 @@
     - { name: "nsslapd-errorlog-mode", value: "{{ dirsrv_logging.error.mode }}" }
 
 - name: Configure Error logging
-  ldap_attrs:
+  community.general.ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -45,6 +46,7 @@
     dn: cn=config
     attributes: "{{ attributes_error_logging }}"
     state: exact
+  when: not ansible_check_mode
 
 - name: Set fact
   set_fact:
@@ -58,7 +60,7 @@
     - { name: "nsslapd-accesslog-mode", value: "{{ dirsrv_logging.access.mode }}" }
 
 - name: Configure Access logging
-  ldap_attrs:
+  community.general.ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -67,3 +69,4 @@
     dn: cn=config
     attributes: "{{ attributes_access_logging }}"
     state: exact
+  when: not ansible_check_mode

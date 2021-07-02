@@ -48,9 +48,10 @@
     # The condition checks "secure-binds is on (found) OR minssf is not 0 (is set and is not 0)"
     dirsrv_starttls_early: "{{ dirsrv_tls_enforced_initially_binds.rc == 0 \
       or (dirsrv_tls_enforced_initially_ssf_set.rc == 0 and dirsrv_tls_enforced_initially_ssf.rc == 1) }}"
-
+  when: not ansible_check_mode
+  
 - name: Configure listen address
-  ldap_attrs:
+  community.general.ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"

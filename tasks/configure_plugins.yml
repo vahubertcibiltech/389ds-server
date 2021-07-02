@@ -1,6 +1,6 @@
 ---
 - name: Enable plugins
-  ldap_attrs:
+  community.general.ldap_attrs:
     server_uri: "{{ dirsrv_server_uri }}"
     validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
     start_tls: "{{ dirsrv_starttls_early }}"
@@ -117,7 +117,7 @@
         - { name: "dnasharedcfgdn", value: "cn=Account UIDs,ou=Ranges,{{ dirsrv_suffix }}" }
 
     - name: Configure DNA plugin parameters (UID)
-      ldap_attrs:
+      community.general.ldap_attrs:
         server_uri: "{{ dirsrv_server_uri }}"
         validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
         start_tls: "{{ dirsrv_starttls_early }}"
@@ -142,7 +142,7 @@
         - { name: "dnasharedcfgdn", value: "cn=Account GIDs,ou=Ranges,{{ dirsrv_suffix }}" }
 
     - name: Configure DNA plugin parameters (GID)
-      ldap_attrs:
+      community.general.ldap_attrs:
         server_uri: "{{ dirsrv_server_uri }}"
         validate_certs: "{{ dirsrv_tls_certificate_trusted }}"
         start_tls: "{{ dirsrv_starttls_early }}"
